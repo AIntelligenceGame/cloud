@@ -34,7 +34,7 @@ func DownloadDBLogFilePortion(ctx context.Context, _region string, _accessKeyId 
 	}
 
 	fmt.Println("Log File Content:")
-	fmt.Println(*downloadResp.LogFileData)
+	fmt.Println(len(*downloadResp.LogFileData))
 	// 指定保存路径和文件名
 	filepath := "./" + *logFile.LogFileName
 
