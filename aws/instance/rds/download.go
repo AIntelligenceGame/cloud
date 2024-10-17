@@ -13,11 +13,11 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/rds/types"
 )
 
-func DownloadDBLogFilePortion(ctx context.Context, _region string, _accessKeyId string, _accessKeySecret string, _dbInstanceIdentifier string, logFile types.DescribeDBLogFilesDetails) (error, int64) {
+func DownloadDBLogFilePortion(ctx context.Context, _region string, _accessKeyId string, _accessKeySecret string, _dbInstanceIdentifier string, logFile types.DescribeDBLogFilesDetails) (int64, error) {
 	// 设置 AK 和 SK
 	client, err := aws_client.ClientRds(ctx, _region, _accessKeyId, _accessKeySecret)
 	if err != nil {
-		return err, 0
+		return 0, err
 	}
 	// 下载日志文件内容
 	downloadInput := &rds.DownloadDBLogFilePortionInput{
@@ -30,7 +30,7 @@ func DownloadDBLogFilePortion(ctx context.Context, _region string, _accessKeyId 
 	downloadResp, err := client.DownloadDBLogFilePortion(context.TODO(), downloadInput)
 	if err != nil {
 		fmt.Println("Error downloading log file portion:", err)
-		return err, 0
+		return 0, err
 	}
 
 	fmt.Println("Log File Content:")
@@ -48,7 +48,7 @@ func DownloadDBLogFilePortion(ctx context.Context, _region string, _accessKeyId 
 	file, err := os.Open(filepath)
 	if err != nil {
 		fmt.Println("Error opening file:", err)
-		return err, 0
+		return 0, err
 	}
 	defer file.Close() // 确保在函数结束时关闭文件
 
@@ -56,7 +56,7 @@ func DownloadDBLogFilePortion(ctx context.Context, _region string, _accessKeyId 
 	info, err := file.Stat()
 	if err != nil {
 		fmt.Println("Error getting file info:", err)
-		return err, 0
+		return 0, err
 	}
 
 	// 获取文件大小（以字节为单位）
@@ -66,5 +66,6 @@ func DownloadDBLogFilePortion(ctx context.Context, _region string, _accessKeyId 
 	fmt.Printf("Downloaded log file content size to %d\n", size)
 
 	fmt.Println("----------------------------------")
-	return nil, size
+	return size, nil
+
 }
